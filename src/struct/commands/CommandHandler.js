@@ -701,7 +701,11 @@ class CommandHandler extends AkairoHandler {
 
         if (isIgnored) return false;
 
-        const time = command.cooldown != null ? command.cooldown : this.defaultCooldown;
+        const time = command.cooldown != null
+            ? typeof command.cooldown === 'function'
+                ? command.cooldown(message)
+                : command.cooldown
+            : this.defaultCooldown;
         if (!time) return false;
 
         const endTime = message.createdTimestamp + time;
