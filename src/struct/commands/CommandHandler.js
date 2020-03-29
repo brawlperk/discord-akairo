@@ -720,7 +720,8 @@ class CommandHandler extends AkairoHandler {
                     }
                 }, time),
                 end: endTime,
-                uses: 0
+                uses: 0,
+                emitted: false
             };
         }
 
@@ -730,7 +731,10 @@ class CommandHandler extends AkairoHandler {
             const end = this.cooldowns.get(message.author.id)[command.id].end;
             const diff = end - message.createdTimestamp;
 
-            this.emit(CommandHandlerEvents.COOLDOWN, message, command, diff);
+            if (!this.cooldowns.get(message.author.id)[command.id].emitted) {
+                this.emit(CommandHandlerEvents.COOLDOWN, message, command, diff);
+                this.cooldowns.get(message.author.id)[command.id].emitted = true;
+            }
             return true;
         }
 
